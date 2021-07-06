@@ -14,18 +14,24 @@ namespace MyShop.WebUI.Controllers
     {
         // GET: ProductManager
 
-        ProductRepository context;
-        ProductCategoryRepository contextProductCategory;
+        ClassContext<Product> productContext;
+        ClassContext<ProductCategory> productCategoryContext;
+
+        ProductCategoryRepository context;
+      
 
         public ProductManagerController()
         {
-            context = new ProductRepository();
-            contextProductCategory = new ProductCategoryRepository();
+            productContext = new ClassContext<Product>();
+            productCategoryContext = new ClassContext<ProductCategory>();
+
+            context = new ProductCategoryRepository();
+
         }
 
         public ActionResult Index()
         {
-            List<Product> products = context.Collection().ToList();
+            List<Product> products = productContext.Collection().ToList();
             return View(products);
         }
 
@@ -33,7 +39,7 @@ namespace MyShop.WebUI.Controllers
         {
             ProductManagerViewModel vmProductManager = new ProductManagerViewModel();
             vmProductManager.Product = new Product();
-            vmProductManager.ProductCategories = contextProductCategory.Collection();
+            vmProductManager.ProductCategories = productCategoryContext.Collection();
 
             return View(vmProductManager);
         }
@@ -46,8 +52,8 @@ namespace MyShop.WebUI.Controllers
             }
             else
             {
-                context.Insert(p.Product);
-                context.Commit();
+                productContext.Insert(p.Product);
+                productContext.Commit();
                 return RedirectToAction("Index");
             }
             
@@ -55,7 +61,7 @@ namespace MyShop.WebUI.Controllers
 
         public ActionResult Edit(string id)
         {
-            Product product = context.Find(id);
+            Product product = productContext.Find(id);
             if (product == null)
             {
                 return HttpNotFound();
@@ -65,7 +71,7 @@ namespace MyShop.WebUI.Controllers
 
                 ProductManagerViewModel vmProductManager = new ProductManagerViewModel();
                 vmProductManager.Product = product;
-                vmProductManager.ProductCategories = contextProductCategory.Collection();
+                vmProductManager.ProductCategories = productCategoryContext.Collection();
 
                 return View(vmProductManager);
             }
@@ -73,7 +79,7 @@ namespace MyShop.WebUI.Controllers
         [HttpPost]
         public ActionResult Edit(ProductManagerViewModel p, string id)
         {
-            Product product = context.Find(id);
+            Product product = productContext.Find(id);
             if (product == null)
             {
                 return HttpNotFound();
@@ -91,7 +97,7 @@ namespace MyShop.WebUI.Controllers
                 product.Price = p.Product.Price;
                 product.Image = p.Product.Image;
 
-                context.Commit();
+                productContext.Commit();
                 return RedirectToAction("Index");
             }
 
@@ -101,7 +107,7 @@ namespace MyShop.WebUI.Controllers
 
         public ActionResult Delete(string id)
         {
-            Product product = context.Find(id);
+            Product product = productContext.Find(id);
             if (product == null)
             {
                 return HttpNotFound();
@@ -115,22 +121,22 @@ namespace MyShop.WebUI.Controllers
         [ActionName("Delete")]
         public ActionResult ConfirmDelete(string id)
         {
-            Product product = context.Find(id);
+            Product product = productContext.Find(id);
             if (product == null)
             {
                 return HttpNotFound();
             }
             else
             {
-                context.Delete(id);
-                context.Commit();
+                productContext.Delete(id);
+                productContext.Commit();
                 return RedirectToAction("Index");
             }
         }
 
         public ActionResult Search(string id)
         {
-            context.Find(id);
+            productContext.Find(id);
             return View();
         }
 
