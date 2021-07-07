@@ -5,6 +5,7 @@ using MyShop.DataAccess.InMemory;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -42,7 +43,7 @@ namespace MyShop.WebUI.Controllers
             return View(vmProductManager);
         }
         [HttpPost]
-        public ActionResult Create(ProductManagerViewModel p)
+        public ActionResult Create(ProductManagerViewModel p, HttpPostedFileBase file)
         {
             if (!ModelState.IsValid)
             {
@@ -50,6 +51,12 @@ namespace MyShop.WebUI.Controllers
             }
             else
             {
+                if (file != null)
+                {
+                    p.Product.Image = p.Product.Id + Path.GetExtension(file.FileName);
+                    file.SaveAs(Server.MapPath("//Content//ProductImages//") + p.Product.Image);
+                }
+
                 productContext.Insert(p.Product);
                 productContext.Commit();
                 return RedirectToAction("Index");
@@ -75,7 +82,7 @@ namespace MyShop.WebUI.Controllers
             }
         }
         [HttpPost]
-        public ActionResult Edit(ProductManagerViewModel p, string id)
+        public ActionResult Edit(ProductManagerViewModel p, string id, HttpPostedFileBase file)
         {
             Product product = productContext.Find(id);
             if (product == null)
@@ -89,11 +96,17 @@ namespace MyShop.WebUI.Controllers
                     return View(product);
                 }
 
+                if (file != null)
+                {
+                    product.Image = p.Product.Id + Path.GetExtension(file.FileName);
+                    file.SaveAs(Server.MapPath("//Content//ProductImages//") + product.Image);
+                }
+
                 product.Name = p.Product.Name;
                 product.Description = p.Product.Description; 
                 product.Category = p.Product.Category;
                 product.Price = p.Product.Price;
-                product.Image = p.Product.Image;
+               
 
                 productContext.Commit();
                 return RedirectToAction("Index");
