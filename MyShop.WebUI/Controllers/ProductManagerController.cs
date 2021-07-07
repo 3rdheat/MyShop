@@ -1,4 +1,5 @@
-﻿using MyShop.Core.Models;
+﻿using MyShop.Core.Contracts;
+using MyShop.Core.Models;
 using MyShop.Core.ViewModels;
 using MyShop.DataAccess.InMemory;
 using System;
@@ -14,18 +15,15 @@ namespace MyShop.WebUI.Controllers
     {
         // GET: ProductManager
 
-        ClassContext<Product> productContext;
-        ClassContext<ProductCategory> productCategoryContext;
+        IClassContext<Product> productContext;
+        IClassContext<ProductCategory> productCategoryContext;
 
-        ProductCategoryRepository context;
       
 
-        public ProductManagerController()
+        public ProductManagerController(IClassContext<Product> productContext, IClassContext<ProductCategory> productCategoryContext)
         {
-            productContext = new ClassContext<Product>();
-            productCategoryContext = new ClassContext<ProductCategory>();
-
-            context = new ProductCategoryRepository();
+            this.productContext = productContext;
+            this.productCategoryContext = productCategoryContext;
 
         }
 
