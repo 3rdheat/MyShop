@@ -1,4 +1,5 @@
-﻿using MyShop.Core.Models;
+﻿using MyShop.Core.Contracts;
+using MyShop.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MyShop.DataAccess.InMemory
 {
-    public class ClassContext<T> where T : BaseModel
+    public class ClassContext<T> : IClassContext<T> where T : BaseModel
     {
         ObjectCache cache = MemoryCache.Default;
         List<T> items;
@@ -68,7 +69,7 @@ namespace MyShop.DataAccess.InMemory
             return items.AsQueryable();
         }
 
- 
+
 
         public T Find(string id)
         {
