@@ -10,7 +10,7 @@ using System.Web;
 
 namespace MyShop.Services
 {
-    class BasketService : IBasketService
+    public class BasketService : IBasketService
     {
         IClassContext<Product> productContext;
         IClassContext<Basket> basketContext;
@@ -45,9 +45,20 @@ namespace MyShop.Services
                 }
 
             }
+            else
+            {
+                if (createIfNull)
+                {
+                    basket = CreateNewBasket(httpContext);
+                }
+            }
+
+
 
             return basket;
         }
+
+       
 
         private Basket CreateNewBasket(HttpContextBase httpContext)
         {
@@ -77,6 +88,8 @@ namespace MyShop.Services
                     ProductId = productId,
                     Quantity = 1
                 };
+
+                basket.BasketItems.Add(item);
             }
             else
             {
@@ -85,6 +98,11 @@ namespace MyShop.Services
 
             basketContext.Commit();
         }
+
+       
+
+
+
 
         public void RemoveFromBasket(HttpContextBase httpContext, string itemId)
         {
